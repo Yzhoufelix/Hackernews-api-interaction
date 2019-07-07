@@ -1,24 +1,10 @@
 import React, { Component } from "react";
 import "./App.css";
 
-const list = [
-  {
-    title: "React",
-    url: "https://reactjs.org/",
-    author: "Jordan Walke",
-    num_comments: 3,
-    points: 4,
-    objectID: 0
-  },
-  {
-    title: "Redux",
-    url: "https://redux.js.org/",
-    author: "Dan Abramov, Andrew Clark",
-    num_comments: 2,
-    points: 5,
-    objectID: 1
-  }
-];
+const DEFAULT_QUERY = "redux";
+const PATH_BASE = "https://hn.algolia.com/api/v1";
+const PATH_SEARCH = "/search";
+const PARAM_SEARCH = "query=";
 
 const isSearched = searchTerm => item =>
   item.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -27,16 +13,31 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      list,
-      searchTerm: ""
+      result: null,
+      searchTerm: DEFAULT_QUERY
     };
     this.handleDismiss = this.handleDismiss.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.setSearchStories = this.setSearchStories.bind(this);
+  }
+
+  componentDidMount() {
+    const { searchTerm } = this.state;
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+      .then(response => response.json())
+      .then(result => this.setSearchStories(result))
+      .catch(error => error);
+  }
+
+  setSearchStories(result) {
+    this.setState({
+      result
+    });
   }
 
   handleDismiss(id) {
     this.setState({
-      list: [...this.state.list.filter(item => item.objectID !== id)]
+      result: [...this.state.result.filter(item => item.objectID !== id)]
     });
   }
 
@@ -48,7 +49,8 @@ class App extends Component {
   }
 
   render() {
-    const { searchTerm, list } = this.state;
+    const { searchTerm, result } = this.state;
+
     return (
       <div className="page">
         <Search
@@ -59,11 +61,13 @@ class App extends Component {
           Search
         </Search>
 
-        <Table
-          pattern={searchTerm}
-          list={list}
-          onDismiss={this.handleDismiss}
-        />
+        {result ? (
+          <Table
+            pattern={searchTerm}
+            result={result.hits}
+            onDismiss={this.handleDismiss}
+          />
+        ) : null}
       </div>
     );
   }
@@ -82,13 +86,13 @@ const Search = props => {
 };
 
 const Table = props => {
-  const { pattern, list, onDismiss } = props;
+  const { pattern, result, onDismiss } = props;
   const largeColumn = { width: "40%" };
   const midColumn = { width: "30%" };
   const smallColumn = { width: "10%" };
   return (
     <div className="table">
-      {list.filter(isSearched(pattern)).map(item => {
+      {result.filter(isSearched(pattern)).map(item => {
         return (
           <div key={item.objectID} className="table-row">
             <span style={largeColumn}>
