@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import axios from "axios";
 
 const DEFAULT_QUERY = "redux";
 const DEFAULT_HPP = "50";
@@ -37,11 +38,10 @@ class App extends Component {
   }
 
   fetchSearchStories(searchTerm, page = 0) {
-    fetch(
+    axios(
       `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`
     )
-      .then(response => response.json())
-      .then(result => this.setSearchStories(result))
+      .then(result => this.setSearchStories(result.data))
       .catch(error => this.setState({ error })); // error handling
   }
 
