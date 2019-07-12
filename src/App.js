@@ -130,6 +130,8 @@ class App extends Component {
 
 export default App;
 
+export { Button, Search, Table };
+
 const Search = props => {
   const { value, onChange, children, className, onSubmit } = props;
   return (

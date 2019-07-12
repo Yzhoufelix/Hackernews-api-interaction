@@ -30,6 +30,7 @@
     ]
   },
   "devDependencies": {
-    "gulp": "^4.0.2"
+    "gulp": "^4.0.2",
+    "react-test-renderer": "^16.8.6"
   }
 }
