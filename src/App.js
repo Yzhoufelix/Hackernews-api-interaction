@@ -115,7 +115,7 @@ class App extends Component {
             <p>Something went wrong.</p> {/*error massage*/}
           </div>
         ) : (
-          <Table result={hits} onDismiss={this.handleDismiss} />
+          <Table hits={hits} onDismiss={this.handleDismiss} />
         )}
 
         <div className="interactions">
@@ -143,13 +143,13 @@ const Search = props => {
 };
 
 const Table = props => {
-  const { result, onDismiss } = props;
+  const { hits, onDismiss } = props;
   const largeColumn = { width: "40%" };
   const midColumn = { width: "30%" };
   const smallColumn = { width: "10%" };
   return (
     <div className="table">
-      {result.map(item => {
+      {hits.map(item => {
         return (
           <div key={item.objectID} className="table-row">
             <span style={largeColumn}>
