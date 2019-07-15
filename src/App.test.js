@@ -1,7 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import renderer from "react-test-renderer";
+import Enzyme, { shallow } from "enzyme";
+import Adapter from "enzyme-adapter-react-16";
 import App, { Search, Button, Table } from "./App";
+
+Enzyme.configure({ adapter: new Adapter() });
 
 describe("App", () => {
   it("renders without crashing", () => {
@@ -49,7 +53,8 @@ describe("Table", () => {
   const props = {
     hits: [
       { title: "a", author: "Eric", num_comments: 1, points: 2, objectID: "1" },
-      { title: "b", author: "Bob", num_comments: 1, points: 2, objectID: "2" }
+      { title: "b", author: "Bob", num_comments: 1, points: 2, objectID: "2" },
+      { title: "c", author: "Tom", num_comments: 1, points: 2, objectID: "3" }
     ]
   };
 
@@ -63,5 +68,10 @@ describe("Table", () => {
     const component = renderer.create(<Table {...props} />);
     const tree = component.toJSON();
     expect(tree).toMatchSnapshot();
+  });
+
+  it("shows two items in list", () => {
+    const wrapper = shallow(<Table {...props} />);
+    expect(wrapper.find(".table-row").length).toBe(3);
   });
 });
